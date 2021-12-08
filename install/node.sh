@@ -23,6 +23,8 @@ yum -y install perl-XML-LibXML gcc-gfortran gcc-c++ dnf-plugins-core python3 per
 # and installs >25 other packages, but it's still only a 3GB install, vs the 20GB
 # you get from the 'intel-hpckit' meta-package.
 yum -y install intel-oneapi-compiler-fortran-2021.4.0 intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic-2021.4.0 intel-oneapi-mpi-devel-2021.4.0 
+# Update:
+yum -y update
 
 # OK, check if our precompiled stuff is available; if not, we'll build it:
 curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/ncar_software_full.tar.gz --output /tmp/ncar_software.tar.gz
