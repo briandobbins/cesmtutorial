@@ -66,7 +66,32 @@ else
   rm -rf /tmp/sources
 fi
 
+# Get the CESM version we're using too, first by ensuring we have the SVN authentication handled:
+svn --username=guestuser --password=friendly list https://svn-ccsm-models.cgd.ucar.edu << EOF
+p
+yes
+EOF
+cd /opt/ncar
+git clone -b cesm2.1.4-rc.08-aws https://github.com/briandobbins/CESM.git cesm
+cd cesm
+./manage_externals/checkout_externals
+
+# Change SSH to enable passwords:
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+systemctl restart sshd.service
+
+# Set the hostname:
+hostname cesm-workshop
+
 fi # End of HEAD being specified in the command-line
+
+# Fix user limits:
+cat << EOF >> /etc/security/limits.conf
+@user	soft	stack		-1
+@user	hard	stack		-1
+@admin  soft	stack		-1
+@admin	hard	stack		-1
+EOF
 
 # Also add the compilers to the /etc/profile.d/oneapi.sh
 echo 'source /opt/intel/oneapi/setvars.sh > /dev/null' > /etc/profile.d/oneapi.sh
@@ -77,6 +102,7 @@ export I_MPI_PMI_LIBRARY=/opt/slurm/lib/libpmi.so
 export I_MPI_OFI_LIBRARY_INTERNAL=0
 export I_MPI_FABRICS=ofi
 export I_MPI_OFI_PROVIDER=efa
+export TMOUT=0
 EOF 
 
 # Set up the 'python' alias to point to Python3 -- this is going away for newer CESM releases, I think, but may
