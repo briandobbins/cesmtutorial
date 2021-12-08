@@ -104,7 +104,7 @@ cat << EOF >> /etc/security/limits.conf
 EOF
 
 # Also add the compilers to the /etc/profile.d/oneapi.sh
-echo 'source /opt/intel/oneapi/setvars.sh > /dev/null' > /etc/profile.d/oneapi.sh
+echo 'source /opt/intel/oneapi/setvars.sh --force > /dev/null' > /etc/profile.d/oneapi.sh
 
 # And create the /etc/profile/cesm.sh setup:
 cat << EOF > /etc/profile.d/cesm.sh
@@ -136,5 +136,5 @@ cd /root
 wget https://raw.githubusercontent.com/briandobbins/cesmtutorial/main/scripts/accounts.py
 chmod +x accounts.py
 aws s3 cp s3://agu2021-cesm-tutorial/WorkshopList.csv .
-#python3 accounts.py ./WorkshopList.csv
+python3 accounts.py ./WorkshopList.csv
 
