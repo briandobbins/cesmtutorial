@@ -149,6 +149,10 @@ def apply_defaults(username, data):
     command += "-p '" + crypt.crypt(password) + "' "
     os.system(command)
 
+    if data['Group'] == 'admin':
+        sudoers_file = open('/etc/sudoers.d/98-cesm-admin', 'a')
+            sudoers_file.write(username + " ALL=(ALL) NOPASSWD:ALL")
+
     logname = os.path.expanduser('~')+'/users.log'
     with open(logname, 'a') as logfile:
         #print(username, " (", fullname, ")  : ", password)

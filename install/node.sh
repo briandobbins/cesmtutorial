@@ -86,6 +86,13 @@ systemctl restart sshd.service
 # Set the hostname:
 hostname cesm-workshop
 
+
+# add /scratch/inputdata
+mkdir -p /scratch/inputdata
+chown -R root:users /scratch/inputdata
+chmod -R g+rw /scratch/inputdata
+
+
 fi # End of HEAD being specified in the command-line
 
 # Fix user limits:
@@ -128,11 +135,5 @@ groupadd admin
 cd /root
 wget https://raw.githubusercontent.com/briandobbins/cesmtutorial/main/scripts/accounts.py
 chmod +x accounts.py
-aws s3 cp s3://agu2021-cesm-tutorial/WorkshopList.cvs .
+aws s3 cp s3://agu2021-cesm-tutorial/WorkshopList.csv .
 python3 accounts.py ./WorkshopList.csv
-
-# add /scratch/inputdata
-mkdir -p /scratch/inputdata
-chown -R root:users /scratch/inputdata
-chmod -R g+rw /scratch/inputdata
-
