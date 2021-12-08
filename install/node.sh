@@ -136,4 +136,5 @@ cd /root
 wget https://raw.githubusercontent.com/briandobbins/cesmtutorial/main/scripts/accounts.py
 chmod +x accounts.py
 aws s3 cp s3://agu2021-cesm-tutorial/WorkshopList.csv .
-python3 accounts.py ./WorkshopList.csv
+#python3 accounts.py ./WorkshopList.csv
+
