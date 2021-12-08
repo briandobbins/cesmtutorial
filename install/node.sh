@@ -73,6 +73,7 @@ svn --username=guestuser --password=friendly list https://svn-ccsm-models.cgd.uc
 p
 yes
 EOF
+
 cd /opt/ncar
 git clone -b cesm2.1.4-rc.08-aws https://github.com/briandobbins/CESM.git cesm
 cd cesm
@@ -100,12 +101,16 @@ echo 'source /opt/intel/oneapi/setvars.sh > /dev/null' > /etc/profile.d/oneapi.s
 
 # And create the /etc/profile/cesm.sh setup:
 cat << EOF > /etc/profile.d/cesm.sh
+export CIME_MACHINE=aws
+
 export I_MPI_PMI_LIBRARY=/opt/slurm/lib/libpmi.so
 export I_MPI_OFI_LIBRARY_INTERNAL=0
 export I_MPI_FABRICS=ofi
 export I_MPI_OFI_PROVIDER=efa
 export TMOUT=0
-EOF 
+
+EOF
+
 
 # Set up the 'python' alias to point to Python3 -- this is going away for newer CESM releases, I think, but may
 # be needed for this 2.1.4-rcX version
@@ -116,4 +121,18 @@ ln -s /usr/bin/python3 /usr/bin/python
 # We do this in /opt so that compute nodes don't need to have all this stuff installed, making
 # boot time much faster.  The first line adds our location to the standard LD search path.
 echo '/opt/ncar/software/lib' > /etc/ld.so.conf.d/ncar.conf
+
+
+# Add users:
+groupadd admin
+cd /root
+wget https://raw.githubusercontent.com/briandobbins/cesmtutorial/main/scripts/accounts.py
+chmod +x accounts.py
+aws s3 cp s3://agu2021-cesm-tutorial/WorkshopList.cvs .
+python3 accounts.py ./WorkshopList.csv
+
+# add /scratch/inputdata
+mkdir -p /scratch/inputdata
+chown -R root:users /scratch/inputdata
+chmod -R g+rw /scratch/inputdata
 

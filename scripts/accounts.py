@@ -147,8 +147,8 @@ def apply_defaults(username, data):
     command += "-g " + data['Group'] + " "
     command += "-s " + "/bin/bash" + " "
     command += "-p '" + crypt.crypt(password) + "' "
+    os.system(command)
 
-    print ("command: ", command)
     logname = os.path.expanduser('~')+'/users.log'
     with open(logname, 'a') as logfile:
         #print(username, " (", fullname, ")  : ", password)
