@@ -88,9 +88,21 @@ hostname cesm-workshop
 
 
 # add /scratch/inputdata
+chmod 755 /scratch/
 mkdir -p /scratch/inputdata
 chown -R root:users /scratch/inputdata
 chmod -R g+rw /scratch/inputdata
+
+# Add 'switchuser' alias:
+cat << EOF > /usr/local/sbin/switchuser
+#!/bin/bash
+if [ "\$#" -ne 1 ]; then
+  echo "Usage: switchuser <user name>"
+  exit
+fi
+sudo -u \$1 -i
+EOF
+chmod +x /usr/local/sbin/switchuser
 
 
 fi # End of HEAD being specified in the command-line
@@ -109,6 +121,7 @@ echo 'source /opt/intel/oneapi/setvars.sh --force > /dev/null' > /etc/profile.d/
 # And create the /etc/profile/cesm.sh setup:
 cat << EOF > /etc/profile.d/cesm.sh
 export CIME_MACHINE=aws
+export CESMROOT=/opt/ncar/cesm
 
 export I_MPI_PMI_LIBRARY=/opt/slurm/lib/libpmi.so
 export I_MPI_OFI_LIBRARY_INTERNAL=0
