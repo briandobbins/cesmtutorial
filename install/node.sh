@@ -122,6 +122,7 @@ echo 'source /opt/intel/oneapi/setvars.sh --force > /dev/null' > /etc/profile.d/
 cat << EOF > /etc/profile.d/cesm.sh
 export CIME_MACHINE=aws
 export CESMROOT=/opt/ncar/cesm
+export PATH=${PATH}:/opt/ncar/cesm/cime/scripts
 
 export I_MPI_PMI_LIBRARY=/opt/slurm/lib/libpmi.so
 export I_MPI_OFI_LIBRARY_INTERNAL=0
