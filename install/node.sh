@@ -108,8 +108,8 @@ fi # End of HEAD being specified in the command-line
 
 # Fix user limits:
 cat << EOF >> /etc/security/limits.conf
-@user	soft	stack		-1
-@user	hard	stack		-1
+@users	soft	stack		-1
+@users	hard	stack		-1
 @admin  soft	stack		-1
 @admin	hard	stack		-1
 EOF
