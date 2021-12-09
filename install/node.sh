@@ -88,7 +88,6 @@ hostname cesm-workshop
 
 
 # add /scratch/inputdata
-chmod 755 /scratch/
 mkdir -p /scratch/inputdata
 chown -R root:users /scratch/inputdata
 chmod -R g+rw /scratch/inputdata
@@ -152,4 +151,33 @@ wget https://raw.githubusercontent.com/briandobbins/cesmtutorial/main/scripts/ac
 chmod +x accounts.py
 aws s3 cp s3://agu2021-cesm-tutorial/WorkshopList.csv .
 python3 accounts.py ./WorkshopList.csv
+
+
+# Extra stuff at the end:
+if [ "HEAD" == "$1" ]; then
+
+# Create passwordless SSH creation script:
+cat << EOF > /usr/local/sbin/setup_passwordless_ssh
+#!/bin/bash
+mkdir ~/.ssh; ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -q -N "" ; cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys ; chmod 0600 ~/.ssh/authorized_keys
+EOF
+chmod +x /usr/local/sbin/setup_passwordless_ssh
+
+# Create SSH keys on the head node for all users added
+while read -r line; do
+  username=$(echo $line | awk -F':' '{print $1}')
+  runuser -l ${username} -c /usr/local/sbin/setup_passwordless_ssh
+done < /root/users.log
+
+# Append build template to ~/.bashrc for each user
+while read -r line; do
+  username=$(echo $line | awk -F':' '{print $1}')
+  runuser -l ${username} -c 'echo "export CESM_BLD_TEMPLATE=/scratch/inputdata/build_template/B1850-tutorial/bld" >> ~/.bashrc'
+done < /root/users.log
+
+
+# Fix permissions on /scratch
+chmod 755 /scratch/
+
+fi
 
