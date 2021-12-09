@@ -150,7 +150,6 @@ def apply_defaults(username, data):
     os.system(command)
     lnscratch = "runuser -l " + username + " -c 'mkdir /scratch/" + username + " ; ln -s /scratch/" + username + " ~/scratch"
     os.system(lnscratch)
-    sshcmd = "runuser -l " + username + " -c 'ssh-keygen
 
     if data['Group'] == 'admin':
         sudoers_file = open('/etc/sudoers.d/98-cesm-admin', 'a')
@@ -159,7 +158,7 @@ def apply_defaults(username, data):
     logname = os.path.expanduser('~')+'/users.log'
     with open(logname, 'a') as logfile:
         #print(username, " (", fullname, ")  : ", password)
-        logfile.write(username + ":" + password + " (" + fullname + ")\n")
+        logfile.write(username + ":" + password + ":" + fullname + "\n")
 
 def configure(data):
     try:
