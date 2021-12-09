@@ -123,6 +123,7 @@ cat << EOF > /etc/profile.d/cesm.sh
 export CIME_MACHINE=aws
 export CESMROOT=/opt/ncar/cesm
 export PATH=${PATH}:/opt/ncar/cesm/cime/scripts
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/ncar/software/lib
 
 export I_MPI_PMI_LIBRARY=/opt/slurm/lib/libpmi.so
 export I_MPI_OFI_LIBRARY_INTERNAL=0
