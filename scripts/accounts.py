@@ -57,8 +57,8 @@ def apply_defaults(username, data):
     command += "-s " + "/bin/bash" + " "
     command += "-p '" + crypt.crypt(password) + "' "
     os.system(command)
-    lnscratch = "runuser -l " + username + " -c 'mkdir /scratch/" + username + " ; ln -s /scratch/" + username + " ~/scratch '"
-    os.system(lnscratch)
+    #lnscratch = "runuser -l " + username + " -c 'mkdir /scratch/" + username + " ; ln -s /scratch/" + username + " ~/scratch '"
+    #os.system(lnscratch)
 
     if data['Group'] == 'admin':
         sudoers_file = open('/etc/sudoers.d/98-cesm-admin', 'a')

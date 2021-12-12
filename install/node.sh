@@ -18,6 +18,8 @@ EOF
 # consistency with the container setup, so duplicates will just be skipped)
 yum -y install vim emacs-nox git subversion which sudo csh make m4 cmake wget file byacc curl-devel zlib-devel
 yum -y install perl-XML-LibXML gcc-gfortran gcc-c++ dnf-plugins-core python3 perl-core ftp numactl-devel words expect
+amazon-linux-extras install epel
+yum -y install xorg-x11-xauth ncview
 
 # Install the 'limited' set of Intel tools we need - note that this also downloads
 # and installs >25 other packages, but it's still only a 3GB install, vs the 20GB
@@ -27,6 +29,7 @@ yum -y install intel-oneapi-compiler-fortran-2021.4.0 intel-oneapi-compiler-dpcp
 yum -y update
 
 # OK, check if our precompiled stuff is available; if not, we'll build it:
+mkdir -p /opt/ncar
 curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/ncar_software_full.tar.gz --output /tmp/ncar_software.tar.gz
 if [ -f /tmp/ncar_software.tar.gz ]; then
   cd /opt/ncar/ && tar zxvf /tmp/ncar_software.tar.gz
@@ -121,6 +124,8 @@ echo 'source /opt/intel/oneapi/setvars.sh --force > /dev/null' > /etc/profile.d/
 cat << EOF > /etc/profile.d/cesm.sh
 export CIME_MACHINE=aws
 export CESMROOT=/opt/ncar/cesm
+export CESMDATAROOT=/scratch
+
 export PATH=${PATH}:/opt/ncar/cesm/cime/scripts
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/ncar/software/lib
 
@@ -153,6 +158,8 @@ aws s3 cp s3://agu2021-cesm-tutorial/WorkshopList.csv .
 python3 accounts.py ./WorkshopList.csv
 
 
+
+
 # Extra stuff at the end:
 if [ "HEAD" == "$1" ]; then
 
@@ -175,9 +182,41 @@ while read -r line; do
   runuser -l ${username} -c 'echo "export CESM_BLD_TEMPLATE=/scratch/inputdata/build_template/B1850-tutorial/bld" >> ~/.bashrc'
 done < /root/users.log
 
+# Get the actual build template files:
+curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/B1850-tutorial_bld_template.tar.gz --output /tmp/tutorial_files.tar.gz
+mkdir -p /scratch/inputdata/build_template/B1850-tutorial
+cd /scratch/inputdata/build_template/B1850-tutorial
+tar zxvf /tmp/B1850-tutorial_bld_template.tar.gz
+
+# Get the B1850-tutorial finidat file:
+mkdir -p /scratch/inputdata/B1850-tutorial/
+curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/B1850-tutorial_bld_template.tar.gz --output /scratch/inputdata/B1850-tutorial/finidat.nc.gz
+cd /scratch/inputdata/B1850-tutorial/
+gunzip finidat.nc.gz
+
+
 
 # Fix permissions on /scratch
 chmod 755 /scratch/
+
+# Add symlinks:
+#!/bin/bash
+
+for user in $(ls /scratch | grep -v inputdata); do
+ echo "user: $user"
+ runuser -l ${user} -c 'ln -s /opt/ncar/cesm ~/cesm'
+ runuser -l ${user} -c 'ln -s /scratch/${user} ~/scratch'
+ runuser -l ${user} -c 'ln -s /${CESMDATAROOT}/inputdata ~/inputdata'
+done
+
+# Get the tutorial files:
+curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/ncar_software_full.tar.gz --output /tmp/tutorial_files.tar.gz
+cd /opt/ncar
+tar zxvf /tmp/tutorial_files.tar.gz
+
+# Update Slurm settings:
+echo "SchedulerParameters=kill_invalid_depend" >> /opt/slurm/etc/slurm.conf
+scontrol reconfigure
 
 fi
 
