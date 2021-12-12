@@ -209,13 +209,13 @@ for user in $(ls /home | grep -v inputdata); do
 done
 
 # Get the tutorial files:
-curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/ncar_software_full.tar.gz --output /tmp/tutorial_files.tar.gz
-cd /opt/ncar
-tar zxvf /tmp/tutorial_files.tar.gz
+#curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/ncar_software_full.tar.gz --output /tmp/tutorial_files.tar.gz
+#cd /opt/ncar
+#tar zxvf /tmp/tutorial_files.tar.gz
 
 # Update Slurm settings:
 echo "SchedulerParameters=kill_invalid_depend" >> /opt/slurm/etc/slurm.conf
-scontrol reconfigure
+#scontrol reconfigure
 
 fi
 
