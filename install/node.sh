@@ -199,22 +199,23 @@ gunzip finidat.nc.gz
 # Fix permissions on /scratch
 chmod 755 /scratch/
 
-# Add symlinks:
-#for user in $(ls /scratch | grep -v inputdata); do
-# echo "user: $user"
-# runuser -l ${user} -c 'ln -s /opt/ncar/cesm ~/cesm'
-# runuser -l ${user} -c 'ln -s /scratch/${user} ~/scratch'
-# runuser -l ${user} -c 'ln -s /${CESMDATAROOT}/inputdata ~/inputdata'
-#done
+# Add scratch and symlinks:
+for user in $(ls /home | grep -v inputdata); do
+  echo "user: $user"
+  mkdir /scratch/${user} ; chown ${user}:users /scratch/${user}
+  runuser -l ${user} -c 'ln -s /opt/ncar/cesm ~/cesm'
+  runuser -l ${user} -c 'ln -s /scratch/${user} ~/scratch'
+  runuser -l ${user} -c 'ln -s /scratch/inputdata ~/inputdata'
+done
 
 # Get the tutorial files:
-#curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/ncar_software_full.tar.gz --output /tmp/tutorial_files.tar.gz
-#cd /opt/ncar
-#tar zxvf /tmp/tutorial_files.tar.gz
+curl ftp://cesm-inputdata-lowres1.cgd.ucar.edu/cesm/low-res/cloud/ncar_software_full.tar.gz --output /tmp/tutorial_files.tar.gz
+cd /opt/ncar
+tar zxvf /tmp/tutorial_files.tar.gz
 
 # Update Slurm settings:
-#echo "SchedulerParameters=kill_invalid_depend" >> /opt/slurm/etc/slurm.conf
-#scontrol reconfigure
+echo "SchedulerParameters=kill_invalid_depend" >> /opt/slurm/etc/slurm.conf
+scontrol reconfigure
 
 fi
 
